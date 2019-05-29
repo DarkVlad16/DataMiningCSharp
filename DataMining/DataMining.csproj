@@ -63,7 +63,6 @@
     <Compile Include="PCA.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Algorithms.cs" />
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

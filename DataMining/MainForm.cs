@@ -1,173 +1,163 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
-namespace DataMining
-{
-    public partial class MainForm : Form
-    {
-        public MainForm()
-        {
+namespace DataMining {
+    public partial class MainForm : Form {
+        class MColor {
+            public MColor(Color color) : this(color.R, color.G, color.B) { }
+
+            public MColor(double r, double g, double b) {
+                R = r;
+                G = g;
+                B = b;
+            }
+
+            public double R { get; set; }
+            public double G { get; set; }
+            public double B { get; set; }
+        }
+
+        public MainForm() {
             InitializeComponent();
         }
 
-        private void PCAOpenImage_Click(object sender, EventArgs e)
-        {
-            if (PCAPicture.Image == null && openFileDialog1.ShowDialog() == DialogResult.OK)
+        double[] singleComponentValues, singleComponentVector,
+            doubleComponentValues, doubleComponentVector,
+            tripleComponentValues, tripleComponentVector;
+
+        private void PCAOpenImage_Click(object sender, EventArgs @event) {
+            if(openFileDialog1.ShowDialog() == DialogResult.OK)
                 PCAPicture.Image = new Bitmap(openFileDialog1.OpenFile());
-            else
-            {
-                
-
-                PCA pca = PCA.getPCA();
-                pca.image = PCAPicture.Image as Bitmap;
-                //imData = Utils.ImageToColorArray(PCAPicture.Image as Bitmap);
-                //        photo = ImageTk.PhotoImage(image)
-                //        (iWidth, iHeight) = image.size
-                //        canvas.configure(width = iWidth, height = iHeight)
-                //        canvas.create_image(0, 0, image = photo, anchor = tk.NW)
-
-                //        // FIRST COMPONENT
-                //                r, g, b = [], [], []
-                //        //get r, g and b arrays
-                //        for pixel in imData:
-                //            r.append(pixel[0])
-                //            g.append(pixel[1])
-                //            b.append(pixel[2])
-
-                //// initial vector
-                //        e = [1 / math.sqrt(3) for i in range(3)]
-
-                //        //iterations
-                //        for i in range(10) :
-
-                //            // singleComponentValues
-                //        Y = [r[i]* e[0]+g[i]*e[1]+b[i]*e[2] for i in range(len(r))]
-
-                //            //mistake vector
-                //            beta = [0, 0, 0]
-                //            for i in range(len(Y)) :
-                //                beta[0] += r[i]*Y[i]
-                //                beta[1] += g[i]*Y[i]
-                //                beta[2] += b[i]*Y[i]
-
-                //            salpha = math.sqrt(beta[0] * *2 + beta[1] * *2 + beta[2] * *2)
-
-                //            e[0] = beta[0]/salpha
-                //            e[1] = beta[1] / salpha
-                //            e[2] = beta[2]/salpha
-
-                //        singleComponentValues = Y
-                //        singleComponentVector = e
-
-                //        // normalization
-                //        sr, sg, sb = [], [], []
-
-                //        for i in range(len(r)):
-                //            sr.append(r[i] - e[0]*Y[i])
-                //            sg.append(g[i] - e[1]*Y[i])
-                //            sb.append(b[i] - e[2]*Y[i])
-
-                //        //SECOND COMPONENT
-
-                //        //initial vector
-                //        e = [1/math.sqrt(3) for i in range(3)]
-
-                //        //iterations
-                //        for i in range(10) :
-
-                //            // doubleComponentValues
-                //        Y = [sr[i]* e[0]+sg[i]*e[1]+sb[i]*e[2] for i in range(len(sr))]
-
-                //            //mistake vector
-                //            beta = [0, 0, 0]
-                //            for i in range(len(Y)) :
-                //                beta[0] += sr[i]*Y[i]
-                //                beta[1] += sg[i]*Y[i]
-                //                beta[2] += sb[i]*Y[i]
-
-                //            salpha = math.sqrt(beta[0] * *2 + beta[1] * *2 + beta[2] * *2)
-
-                //            e[0] = beta[0]/salpha
-                //            e[1] = beta[1] / salpha
-                //            e[2] = beta[2]/salpha
-
-                //        doubleComponentValues = Y
-                //        doubleComponentVector = e
-
-                //        // normalization
-                //        tr, tg, tb = [], [], []
-
-                //        for i in range(len(r)):
-                //            tr.append(sr[i] - e[0]*Y[i])
-                //            tg.append(sg[i] - e[1]*Y[i])
-                //            tb.append(sb[i] - e[2]*Y[i])
-
-                //        //THIRD COMPONENT
-
-                //        //initial vector
-                //        e = [1/math.sqrt(3) for i in range(3)]
-
-                //        //iterations
-                //        for i in range(10) :
-
-                //            // tripleComponentValues
-                //        Y = [tr[i]* e[0]+tg[i]*e[1]+tb[i]*e[2] for i in range(len(tr))]
-
-                //            //mistake vector
-                //            beta = [0, 0, 0]
-                //            for i in range(len(Y)) :
-                //                beta[0] += tr[i]*Y[i]
-                //                beta[1] += tg[i]*Y[i]
-                //                beta[2] += tb[i]*Y[i]
-
-                //            salpha = math.sqrt(beta[0] * *2 + beta[1] * *2 + beta[2] * *2)
-
-                //            e[0] = beta[0]/salpha
-                //            e[1] = beta[1] / salpha
-                //            e[2] = beta[2]/salpha
-
-                //        tripleComponentValues = Y
-                //        tripleComponentVector = e
-
-
-
-                //                var pixels = Utils.ImageToColorArray(PCAPicture.Image as Bitmap);
+            else {
+                return;
             }
-        }
 
-        private void PCAComponent1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PCAComponent12_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PCAComponent13_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PCAComponent23_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PCAComponent3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PCAReset_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                var image = openFileDialog1.OpenFile();
-                PCAPicture.Image = new Bitmap(image);
+            var bitmap = PCAPicture.Image as Bitmap;
+            var pixels = new Collection<MColor>();
+            for(var x = 0; x < bitmap.Width; x++) {
+                for(var y = 0; y < bitmap.Height; y++) {
+                    pixels.Add(new MColor(bitmap.GetPixel(x, y)));
+                }
             }
+            var e = new double[3];
+            for(var i1 = 0; i1 < 3; i1++) {
+                e[i1] = 1 / Math.Sqrt(3);
+            }
+            var Y = new double[pixels.Count];
+            for(var i = 0; i < 10; i++) {
+                var beta = new double[3] { 0, 0, 0 };
+                for(var i1 = 0; i1 < pixels.Count; i1++) {
+                    Y[i1] = pixels[i1].R * e[0] + pixels[i1].G * e[1] + pixels[i1].B * e[2];
+                    beta[0] += pixels[i1].R * Y[i1];
+                    beta[1] += pixels[i1].G * Y[i1];
+                    beta[2] += pixels[i1].B * Y[i1];
+                }
+                var salpha = Math.Sqrt(beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2]);
+                for(var i1 = 0; i1 < 3; i1++) {
+                    e[i1] = beta[i1] / salpha;
+                }
+            }
+            singleComponentValues = Y.ToArray();
+            singleComponentVector = e.ToArray();
+
+            var sPixels = new Collection<MColor>();
+            for(var i = 0; i < pixels.Count; i++) {
+                sPixels.Add(new MColor(pixels[i].R - e[0] * Y[i], pixels[i].G - e[1] * Y[i], pixels[i].B - e[2] * Y[i]));
+            }
+            for(var i1 = 0; i1 < 3; i1++) {
+                e[i1] = 1 / Math.Sqrt(3);
+            }
+            Y = new double[sPixels.Count];
+            for(var i = 0; i < 10; i++) {
+                var beta = new double[3] { 0, 0, 0 };
+                for(var i1 = 0; i1 < sPixels.Count; i1++) {
+                    Y[i1] = sPixels[i1].R * e[0] + sPixels[i1].G * e[1] + sPixels[i1].B * e[2];
+                    beta[0] += sPixels[i1].R * Y[i1];
+                    beta[1] += sPixels[i1].G * Y[i1];
+                    beta[2] += sPixels[i1].B * Y[i1];
+                }
+                var salpha = Math.Sqrt(beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2]);
+                for(var i1 = 0; i1 < 3; i1++) {
+                    e[i1] = beta[i1] / salpha;
+                }
+            }
+            doubleComponentValues = Y.ToArray();
+            doubleComponentVector = e.ToArray();
+
+            var tPixels = new Collection<MColor>();
+            for(var i = 0; i < pixels.Count; i++) {
+                tPixels.Add(new MColor(sPixels[i].R - e[0] * Y[i], sPixels[i].G - e[1] * Y[i], sPixels[i].B - e[2] * Y[i]));
+            }
+            for(var i1 = 0; i1 < 3; i1++) {
+                e[i1] = 1 / Math.Sqrt(3);
+            }
+            Y = new double[tPixels.Count];
+            for(var i = 0; i < 10; i++) {
+                var beta = new double[3] { 0, 0, 0 };
+                for(var i1 = 0; i1 < tPixels.Count; i1++) {
+                    Y[i1] = tPixels[i1].R * e[0] + tPixels[i1].G * e[1] + tPixels[i1].B * e[2];
+                    beta[0] += tPixels[i1].R * Y[i1];
+                    beta[1] += tPixels[i1].G * Y[i1];
+                    beta[2] += tPixels[i1].B * Y[i1];
+                }
+                var salpha = Math.Sqrt(beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2]);
+                for(var i1 = 0; i1 < 3; i1++) {
+                    e[i1] = beta[i1] / salpha;
+                }
+            }
+            tripleComponentValues = Y.ToArray();
+            tripleComponentVector = e.ToArray();
+        }
+
+        private void PCAComponent1_Click(object sender, EventArgs e) {
+            ChangeImage(useDoubleValue: false, useTripleValue: false);
+        }
+
+        private void PCAComponent12_Click(object sender, EventArgs e) {
+            ChangeImage(useTripleValue: false);
+        }
+
+        private void PCAComponent13_Click(object sender, EventArgs e) {
+            ChangeImage(useDoubleValue: false);
+        }
+
+        private void PCAComponent23_Click(object sender, EventArgs e) {
+            ChangeImage(useSingleValue: false);
+        }
+
+        private void PCAComponent3_Click(object sender, EventArgs e) {
+            ChangeImage();
+        }
+
+        void ChangeImage(bool useSingleValue = true, bool useDoubleValue = true, bool useTripleValue = true) {
+            var bitmap = PCAPicture.Image as Bitmap;
+            for(var x = 0; x < bitmap.Width; x++) {
+                for(var y = 0; y < bitmap.Height; y++) {
+                    var singleValue = useSingleValue ? singleComponentValues[x * PCAPicture.Image.Height + y] : 0;
+                    var doubleValue = useDoubleValue ? doubleComponentValues[x * PCAPicture.Image.Height + y] : 0;
+                    var tripleValue = useTripleValue ? tripleComponentValues[x * PCAPicture.Image.Height + y] : 0;
+                    bitmap.SetPixel(x, y, Color.FromArgb(
+                        red: CoerceColor(singleValue * singleComponentVector[0] + doubleValue * doubleComponentVector[0] + tripleValue * tripleComponentVector[0]),
+                        green: CoerceColor(singleValue * singleComponentVector[1] + doubleValue * doubleComponentVector[1] + tripleValue * tripleComponentVector[1]),
+                        blue: CoerceColor(singleValue * singleComponentVector[2] + doubleValue * doubleComponentVector[2] + tripleValue * tripleComponentVector[2])
+                    ));
+                }
+            }
+            PCAPicture.Refresh();
+        }
+
+        int CoerceColor(double color) {
+            return new[] { new[] { (int)color, 0 }.Max(), 255 }.Min();
+        }
+
+        private void PCAReset_Click(object sender, EventArgs e) {
+            if(string.IsNullOrEmpty(openFileDialog1.FileName)) {
+                return;
+            }
+            PCAPicture.Image = new Bitmap(openFileDialog1.OpenFile());
         }
     }
 }
