@@ -1,137 +1,131 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 
-namespace DataMining
-{
-    class PCA
-    {
-        private static PCA instance;
-        public static PCA getPCA()
-        {
-            if (instance == null)
-                instance = new PCA();
-            return instance;
+namespace DataMining {
+    class PCA {
+        class MColor {
+            public MColor(Color color) : this(color.R, color.G, color.B) { }
+
+            public MColor(double r, double g, double b) {
+                R = r;
+                G = g;
+                B = b;
+            }
+
+            public double R { get; }
+            public double G { get; }
+            public double B { get; }
         }
 
-        private PCA()
-        {
-            image = null;
-            photo = null;
-            iWidth = 0;
-            iHeight = 0;
-            imData = new List<object>();
-            singleComponentValues = new List<double>();
-            singleComponentVector = new List<double>();
-            singlePhoto = null;
-            doubleComponentValues = new List<double>();
-            doubleComponentVector = new List<double>();
-            doublePhoto = null;
-            doublePhoto13 = null;
-            doublePhoto23 = null;
-            tripleComponentValues = new List<double>();
-            tripleComponentVector = new List<double>();
-            triplePhoto = null;
+        public PCA(Bitmap bitmap) {
+            this.bitmap = bitmap;
+            Initialize();
         }
-        
-        public Bitmap image;
-        public Bitmap photo;
-        public double iWidth = 0;
-        public double iHeight = 0;
-        public List<object> imData;
-        public List<double> singleComponentValues;
-        public List<double> singleComponentVector;
-        public Bitmap singlePhoto;
-        public List<double> doubleComponentValues;
-        public List<double> doubleComponentVector;
-        public Bitmap doublePhoto;
-        public Bitmap doublePhoto13;
-        public Bitmap doublePhoto23;
-        public List<double> tripleComponentValues;
-        public List<double> tripleComponentVector;
-        public Bitmap triplePhoto;
-        
-        private void singleComponent()
-        {
-            if (doublePhoto == null)
-            {
-                //List<(int r, int g, int b)> pixels = new List<(int r, int g, int b)>();
+        ~PCA() {
+            bitmap.Dispose();
+        }
 
-                foreach (var el in singleComponentValues)
-                {
-                    var r = el * singleComponentVector[0];
-                    var g = el * singleComponentVector[1];
-                    var b = el * singleComponentVector[2];
-                    //pixels.Add((r: (int)r, g: (int)g, b: (int) b));
+        readonly Bitmap bitmap;
+        double[] singleComponentValues, singleComponentVector,
+            doubleComponentValues, doubleComponentVector,
+            tripleComponentValues, tripleComponentVector;
+
+        public void ChangeImage(bool useSingleValue = true, bool useDoubleValue = true, bool useTripleValue = true) {
+            for(var x = 0; x < bitmap.Width; x++) {
+                for(var y = 0; y < bitmap.Height; y++) {
+                    var singleValue = useSingleValue ? singleComponentValues[x * bitmap.Height + y] : 0;
+                    var doubleValue = useDoubleValue ? doubleComponentValues[x * bitmap.Height + y] : 0;
+                    var tripleValue = useTripleValue ? tripleComponentValues[x * bitmap.Height + y] : 0;
+                    bitmap.SetPixel(x, y, Color.FromArgb(
+                        red: CoerceColor(singleValue * singleComponentVector[0] + doubleValue * doubleComponentVector[0] + tripleValue * tripleComponentVector[0]),
+                        green: CoerceColor(singleValue * singleComponentVector[1] + doubleValue * doubleComponentVector[1] + tripleValue * tripleComponentVector[1]),
+                        blue: CoerceColor(singleValue * singleComponentVector[2] + doubleValue * doubleComponentVector[2] + tripleValue * tripleComponentVector[2])
+                    ));
                 }
-
-                image = new Bitmap(image.Size.Width, image.Size.Height);
-                //image.SetPixel(pixels);
-                singlePhoto = image;
             }
         }
 
-        private Bitmap doubleComponent(List<double> componentVector1, List<double> componentVector2, 
-            List<double> componentValues1, List<double> componentValues2)
-        {
-            if (doublePhoto == null)
-            {
-                //List<(int r, int g, int b)> pixels = new List<(int r, int g, int b)>();
-                for (int i = 0; i < componentValues1.Count; i++)
-                {
-                    var el1 = componentValues1[i];
-                    var el2 = componentValues2[i];
-
-                    var r = el2 * componentVector2[0] + el1 * componentVector1[0];
-                    var g = el2 * componentVector2[1] + el1 * componentVector1[1];
-                    var b = el2 * componentVector2[2] + el1 * componentVector1[2];
-                    //pixels.Add((r: (int) r, g: (int) g, b: (int) b));
+        void Initialize() {
+            var pixels = new Collection<MColor>();
+            for(var x = 0; x < bitmap.Width; x++) {
+                for(var y = 0; y < bitmap.Height; y++) {
+                    pixels.Add(new MColor(bitmap.GetPixel(x, y)));
                 }
-                //image = Image.new (image.mode, image.size);
-                //image.putdata(pixels);
-                //return ImageTk.PhotoImage(image);
             }
-
-            return null;
-        }
-
-        public void doubleComponent12()
-        {
-            doublePhoto = doubleComponent(singleComponentVector, doubleComponentVector, singleComponentValues, doubleComponentValues);
-        }
-
-        public void doubleComponent13()
-        {
-            doublePhoto = doubleComponent(singleComponentVector, tripleComponentVector, singleComponentValues, tripleComponentValues);
-        }
-
-
-        public void doubleComponent23()
-        {
-            doublePhoto = doubleComponent(doubleComponentVector, tripleComponentVector, doubleComponentValues, tripleComponentValues);
-        }
-
-        private void tripleComponent()
-        {
-            if (doublePhoto == null)
-            {
-                //List<(int r, int g, int b)> pixels = new List<(int r, int g, int b)>();
-
-                for (int i = 0; i < singleComponentValues.Count; i++)
-                {
-                    var el1 = singleComponentValues[i];
-                    var el2 = doubleComponentValues[i];
-                    var el3 = tripleComponentValues[i];
-
-                    var r = el2 * doubleComponentVector[0] + el1 * singleComponentVector[0] + el3 * tripleComponentVector[0];
-                    var g = el2 * doubleComponentVector[1] + el1 * singleComponentVector[1] + el3 * tripleComponentVector[1];
-                    var b = el2 * doubleComponentVector[2] + el1 * singleComponentVector[2] + el3 * tripleComponentVector[2];
-                    //pixels.Add((r: (int)r, g: (int)g, b: (int)b));
+            var e = new double[3];
+            for(var i1 = 0; i1 < 3; i1++) {
+                e[i1] = 1 / Math.Sqrt(3);
+            }
+            var Y = new double[pixels.Count];
+            for(var i = 0; i < 10; i++) {
+                var beta = new double[3] { 0, 0, 0 };
+                for(var i1 = 0; i1 < pixels.Count; i1++) {
+                    Y[i1] = pixels[i1].R * e[0] + pixels[i1].G * e[1] + pixels[i1].B * e[2];
+                    beta[0] += pixels[i1].R * Y[i1];
+                    beta[1] += pixels[i1].G * Y[i1];
+                    beta[2] += pixels[i1].B * Y[i1];
                 }
-                //image = Image.new (image.mode, image.size);
-                //image.putdata(pixels);
-                //triplePhoto = ImageTk.PhotoImage(image);
+                var salpha = Math.Sqrt(beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2]);
+                for(var i1 = 0; i1 < 3; i1++) {
+                    e[i1] = beta[i1] / salpha;
+                }
             }
+            singleComponentValues = Y.ToArray();
+            singleComponentVector = e.ToArray();
+
+            var sPixels = new Collection<MColor>();
+            for(var i = 0; i < pixels.Count; i++) {
+                sPixels.Add(new MColor(pixels[i].R - e[0] * Y[i], pixels[i].G - e[1] * Y[i], pixels[i].B - e[2] * Y[i]));
+            }
+            for(var i1 = 0; i1 < 3; i1++) {
+                e[i1] = 1 / Math.Sqrt(3);
+            }
+            Y = new double[sPixels.Count];
+            for(var i = 0; i < 10; i++) {
+                var beta = new double[3] { 0, 0, 0 };
+                for(var i1 = 0; i1 < sPixels.Count; i1++) {
+                    Y[i1] = sPixels[i1].R * e[0] + sPixels[i1].G * e[1] + sPixels[i1].B * e[2];
+                    beta[0] += sPixels[i1].R * Y[i1];
+                    beta[1] += sPixels[i1].G * Y[i1];
+                    beta[2] += sPixels[i1].B * Y[i1];
+                }
+                var salpha = Math.Sqrt(beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2]);
+                for(var i1 = 0; i1 < 3; i1++) {
+                    e[i1] = beta[i1] / salpha;
+                }
+            }
+            doubleComponentValues = Y.ToArray();
+            doubleComponentVector = e.ToArray();
+
+            var tPixels = new Collection<MColor>();
+            for(var i = 0; i < pixels.Count; i++) {
+                tPixels.Add(new MColor(sPixels[i].R - e[0] * Y[i], sPixels[i].G - e[1] * Y[i], sPixels[i].B - e[2] * Y[i]));
+            }
+            for(var i1 = 0; i1 < 3; i1++) {
+                e[i1] = 1 / Math.Sqrt(3);
+            }
+            Y = new double[tPixels.Count];
+            for(var i = 0; i < 10; i++) {
+                var beta = new double[3] { 0, 0, 0 };
+                for(var i1 = 0; i1 < tPixels.Count; i1++) {
+                    Y[i1] = tPixels[i1].R * e[0] + tPixels[i1].G * e[1] + tPixels[i1].B * e[2];
+                    beta[0] += tPixels[i1].R * Y[i1];
+                    beta[1] += tPixels[i1].G * Y[i1];
+                    beta[2] += tPixels[i1].B * Y[i1];
+                }
+                var salpha = Math.Sqrt(beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2]);
+                for(var i1 = 0; i1 < 3; i1++) {
+                    e[i1] = beta[i1] / salpha;
+                }
+            }
+            tripleComponentValues = Y.ToArray();
+            tripleComponentVector = e.ToArray();
+        }
+
+        static int CoerceColor(double color) {
+            return new[] { new[] { (int)color, 0 }.Max(), 255 }.Min();
         }
     }
 }
