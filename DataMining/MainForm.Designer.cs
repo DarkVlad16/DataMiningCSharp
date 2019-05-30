@@ -49,7 +49,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.KMeansShowOriginal = new System.Windows.Forms.Button();
+            this.KMeansReset = new System.Windows.Forms.Button();
             this.KMeansShowClusters = new System.Windows.Forms.Button();
             this.KMeansFindNewCenters = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -68,6 +68,9 @@
             this.PCAReset = new System.Windows.Forms.Button();
             this.PCAOpenImage = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.KMeansShowOriginal = new System.Windows.Forms.Button();
+            this.KMeansShowPoints = new System.Windows.Forms.Button();
+            this.KMeansClearPoints = new System.Windows.Forms.Button();
             this.tabPage4.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -86,10 +89,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.PCAPicture)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // tabPage4
             // 
@@ -309,7 +308,10 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.KMeansClearPoints);
+            this.tabPage2.Controls.Add(this.KMeansShowPoints);
             this.tabPage2.Controls.Add(this.KMeansShowOriginal);
+            this.tabPage2.Controls.Add(this.KMeansReset);
             this.tabPage2.Controls.Add(this.KMeansShowClusters);
             this.tabPage2.Controls.Add(this.KMeansFindNewCenters);
             this.tabPage2.Controls.Add(this.panel1);
@@ -324,14 +326,15 @@
             this.tabPage2.Text = "K-Means (RGB)";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // KMeansShowOriginal
+            // KMeansReset
             // 
-            this.KMeansShowOriginal.Location = new System.Drawing.Point(9, 164);
-            this.KMeansShowOriginal.Name = "KMeansShowOriginal";
-            this.KMeansShowOriginal.Size = new System.Drawing.Size(110, 27);
-            this.KMeansShowOriginal.TabIndex = 8;
-            this.KMeansShowOriginal.Text = "Show Original";
-            this.KMeansShowOriginal.UseVisualStyleBackColor = true;
+            this.KMeansReset.Location = new System.Drawing.Point(9, 275);
+            this.KMeansReset.Name = "KMeansReset";
+            this.KMeansReset.Size = new System.Drawing.Size(110, 38);
+            this.KMeansReset.TabIndex = 8;
+            this.KMeansReset.Text = "Reset to Original";
+            this.KMeansReset.UseVisualStyleBackColor = true;
+            this.KMeansReset.Click += new System.EventHandler(this.KMeansReset_Click);
             // 
             // KMeansShowClusters
             // 
@@ -341,6 +344,7 @@
             this.KMeansShowClusters.TabIndex = 7;
             this.KMeansShowClusters.Text = "Show Clusters";
             this.KMeansShowClusters.UseVisualStyleBackColor = true;
+            this.KMeansShowClusters.Click += new System.EventHandler(this.KMeansShowClusters_Click);
             // 
             // KMeansFindNewCenters
             // 
@@ -350,6 +354,7 @@
             this.KMeansFindNewCenters.TabIndex = 6;
             this.KMeansFindNewCenters.Text = "Find New Centers";
             this.KMeansFindNewCenters.UseVisualStyleBackColor = true;
+            this.KMeansFindNewCenters.Click += new System.EventHandler(this.KMeansFindNewCenters_Click);
             // 
             // panel1
             // 
@@ -371,6 +376,7 @@
             this.KMeansPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.KMeansPicture.TabIndex = 0;
             this.KMeansPicture.TabStop = false;
+            this.KMeansPicture.Click += new System.EventHandler(this.KMeansPicture_Click);
             // 
             // KMeansClusters
             // 
@@ -406,6 +412,7 @@
             this.KMeansRun.TabIndex = 1;
             this.KMeansRun.Text = "Open Image";
             this.KMeansRun.UseVisualStyleBackColor = true;
+            this.KMeansRun.Click += new System.EventHandler(this.KMeansRun_Click);
             // 
             // tabPage1
             // 
@@ -529,6 +536,36 @@
             this.tabControl1.Size = new System.Drawing.Size(932, 450);
             this.tabControl1.TabIndex = 0;
             // 
+            // KMeansShowOriginal
+            // 
+            this.KMeansShowOriginal.Location = new System.Drawing.Point(9, 164);
+            this.KMeansShowOriginal.Name = "KMeansShowOriginal";
+            this.KMeansShowOriginal.Size = new System.Drawing.Size(110, 27);
+            this.KMeansShowOriginal.TabIndex = 9;
+            this.KMeansShowOriginal.Text = "Show Original";
+            this.KMeansShowOriginal.UseVisualStyleBackColor = true;
+            this.KMeansShowOriginal.Click += new System.EventHandler(this.KMeansShowOriginal_Click);
+            // 
+            // KMeansShowPoints
+            // 
+            this.KMeansShowPoints.Location = new System.Drawing.Point(9, 197);
+            this.KMeansShowPoints.Name = "KMeansShowPoints";
+            this.KMeansShowPoints.Size = new System.Drawing.Size(110, 27);
+            this.KMeansShowPoints.TabIndex = 10;
+            this.KMeansShowPoints.Text = "Show Points";
+            this.KMeansShowPoints.UseVisualStyleBackColor = true;
+            this.KMeansShowPoints.Click += new System.EventHandler(this.KMeansShowPoints_Click);
+            // 
+            // KMeansClearPoints
+            // 
+            this.KMeansClearPoints.Location = new System.Drawing.Point(9, 230);
+            this.KMeansClearPoints.Name = "KMeansClearPoints";
+            this.KMeansClearPoints.Size = new System.Drawing.Size(110, 27);
+            this.KMeansClearPoints.TabIndex = 11;
+            this.KMeansClearPoints.Text = "Clear Points";
+            this.KMeansClearPoints.UseVisualStyleBackColor = true;
+            this.KMeansClearPoints.Click += new System.EventHandler(this.KMeansClearPoints_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -585,7 +622,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button KMeansShowOriginal;
+        private System.Windows.Forms.Button KMeansReset;
         private System.Windows.Forms.Button KMeansShowClusters;
         private System.Windows.Forms.Button KMeansFindNewCenters;
         private System.Windows.Forms.Panel panel1;
@@ -606,6 +643,9 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.NumericUpDown numericUpDown3;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button KMeansClearPoints;
+        private System.Windows.Forms.Button KMeansShowPoints;
+        private System.Windows.Forms.Button KMeansShowOriginal;
     }
 }
 
